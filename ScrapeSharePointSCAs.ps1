@@ -1,4 +1,3 @@
-
 $server = "Server Name"
 $database = "Database Name"
 

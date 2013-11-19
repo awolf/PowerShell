@@ -59,6 +59,34 @@ Function main
     }
 }
 
+
+ForEach ($data in $urls)
+{
+    $url = $data.Url;
+
+    $page = Invoke-WebRequest $url -UseDefaultCredential
+
+    $title = $page.ParsedHtml.Title
+
+    $title = $title -replace "'", "''"
+
+    if ($title -ne "Error: Access Denied" -and $title -ne "")
+    {
+        
+        Invoke-Sqlcmd `
+            -Query "UPDATE [dbo].[Url]  SET [Title] = '$title'  WHERE UrlId = $($data.UrlId)" `
+            -ServerInstance "server" `
+            -Database "database" `
+            -SuppressProviderContextWarning
+    }
+
+    Write-Host "Url; $url Title: $Title"
+
+    $title = $null
+    $url = $null
+    $page = $null
+}
+
 clear 
 
 main
